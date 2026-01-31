@@ -1,73 +1,82 @@
 function getComputerChoice() {
-let num = Math.random() * 3;
-    if (num >= 0 && num < 1) {
-        return "rock";
-    } else if (num >= 1 && num < 2) {
-        return "paper";
-    } else {
-        return "scissors";
-    }
+  const choices = ["rock", "paper", "scissors"];
+  const index = Math.floor(Math.random() * choices.length);
+  return choices[index];
 }
 
-function getHumanChoice() {
-    let choice = prompt("Enter your choice: rock, paper or scissors.");
-    choice = choice.toLowerCase();
-    if (choice == "rock" || choice == "paper" || choice == "scissors") {
-        return choice;
-    } else {
-        console.log("Incorrect value.");
-    }
+function disableButtons() {
+  btnRock.disabled = true;
+  btnPaper.disabled = true;
+  btnScissors.disabled = true;
 }
 
-function getLose() {
-    console.log("It's a loss :(\n+1 point to the computer\n");
+function outputText(text) {
+  const para = document.createElement("p");
+  para.textContent = text;
+  resultsDiv.appendChild(para);
+}
+
+function getLose(computerChoice, humanChoice) {
+    outputText("It's a loss :( \n+1 point to the computer");
+    outputText(`${computerChoice} beat ${humanChoice}`);
     computerScore += 1;
 }
 
-function getWin() {
-    console.log("That's a win!\n+1 point for you.\n");
+function getWin(computerChoice, humanChoice) {
+    outputText("That's a win! \n+1 point for you.");
+    outputText(`${humanChoice} beat ${computerChoice}`);
     humanScore += 1;
 }
 
-function playRound (humanChoice, computerChoice) {
-    if (humanChoice == computerChoice) 
-        {console.log("It's a tie! Replay the round.");}
+function checkGameOver() {
+    if (humanScore === 5 || computerScore === 5) {
+        disableButtons();
 
-    else if (humanChoice == "rock") {
-        if (computerChoice == "paper") 
-        {getLose(); console.log(computerChoice + " beat " + humanChoice)}
-        else 
-        {getWin(); console.log(humanChoice + " beat " + computerChoice)}
-
-    } else if (humanChoice == "paper") {
-        if (computerChoice == "scissors") 
-        {getLose(); console.log(computerChoice + " beat " + humanChoice)}
-        else {getWin(); console.log(humanChoice + " beat " + computerChoice)}
-
-    } else {
-        if (computerChoice == "rock") 
-        {getLose(); console.log(computerChoice + " beat " + humanChoice)}
-        else 
-        {getWin(); console.log(humanChoice + " beat " + computerChoice)}
+        if (humanScore === computerScore){
+            outputText(`This game ended in a draw with a score of: ${humanScore} : ${computerScore}`);
+        }
+        else if (humanScore > computerScore) {
+            outputText(`You won this game with a score of: ${humanScore} : ${computerScore}`);
+        } else {
+            outputText(`This game was won by the computer, with a score of: ${computerScore} : ${humanScore}`);
+        }
     }
 }
 
-function playGame() {
-   console.log("This game will last 5 rounds.");
-   for (let index = 0; index < 5; index++) {
-    playRound(getHumanChoice(), getComputerChoice());
-} 
-    if (humanScore == computerScore){
-        console.log("This game ended in a draw with a score of: " + humanScore + ":" + computerScore);
-    }
-    else if (humanScore > computerScore) {
-        console.log("You won this game with a score of: " + humanScore + ":" + computerScore);
+function playRound (humanChoice) {
+    const computerChoice = getComputerChoice();
+
+    if (humanChoice === computerChoice) 
+        {outputText("It's a tie! Replay the round.");}
+
+    else if (humanChoice === "rock") {
+        computerChoice === "paper" ?
+        getLose(computerChoice, humanChoice) :
+        getWin(computerChoice, humanChoice);
+
+    } else if (humanChoice === "paper") {
+        computerChoice === "scissors" ?
+        getLose(computerChoice, humanChoice) :
+        getWin(computerChoice, humanChoice);
+
     } else {
-        console.log("This game was won by the computer, with a score of: " + computerScore + ":" + humanScore);
+        computerChoice === "rock" ?
+        getLose(computerChoice, humanChoice) :
+        getWin(computerChoice, humanChoice);
     }
+
+    checkGameOver();
 }
+
+const btnRock = document.querySelector("#rock");
+const btnPaper = document.querySelector("#paper");
+const btnScissors = document.querySelector("#scissors");
+
+const resultsDiv = document.querySelector("#results");
 
 let humanScore = 0;
 let computerScore = 0;
 
-playGame();
+btnRock.addEventListener('click', () => playRound("rock"));
+btnPaper.addEventListener('click', () => playRound("paper"));
+btnScissors.addEventListener('click', () => playRound("scissors"));
